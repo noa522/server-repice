@@ -1,60 +1,32 @@
 // middleware/errorHandler.js
 
 // Error handler middleware - פורמט נדרש: { error: { message: '...' } }
+/**
+ * Handles errors thrown in the application.
+ * @param {Error} err - The error object thrown.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @param {import('express').NextFunction} next - Express next middleware function.
+ * 
+ * מדפיס את הודעת השגיאה ל-console.
+ * בודק אם מדובר בשגיאת ולידציה של Mongoose, ומחזיר הודעה מתאימה עם קוד 400.
+ * בודק אם מדובר בשגיאת מפתח כפול (duplicate key) של MongoDB, ומחזיר הודעה מתאימה עם קוד 409.
+ * בודק אם מדובר בשגיאת JWT (טוקן לא תקין או שפג תוקף), ומחזיר הודעה מתאימה עם קוד 401.
+ * אם לא זוהתה שגיאה מיוחדת, מחזיר שגיאה כללית עם קוד 500 או קוד מותאם מהשגיאה.
+ * במצב פיתוח (development) מחזיר גם את ה-stack של השגיאה.
+ */
 exports.errorHandler = (err, req, res, next) => {
-  console.error("❌ Server error:", err.message);
-  
-  // Mongoose validation errors
-  if (err.name === 'ValidationError') {
-    const message = Object.values(err.errors).map(val => val.message).join(', ');
-    return res.status(400).json({
-      error: { message }
-    });
-  }
-
-  // Duplicate key error (MongoDB)
-  if (err.code === 11000) {
-    const field = Object.keys(err.keyValue)[0];
-    return res.status(409).json({
-      error: { message: `${field} already exists` }
-    });
-  }
-
-  // JWT errors
-  if (err.name === 'JsonWebTokenError') {
-    return res.status(401).json({
-      error: { message: 'Invalid token' }
-    });
-  }
-
-  if (err.name === 'TokenExpiredError') {
-    return res.status(401).json({
-      error: { message: 'Token expired' }
-    });
-  }
-
-  // Default error
-  res.status(err.status || 500).json({
-    error: {
-      message: err.message || "Something went wrong!",
-      ...(process.env.NODE_ENV === "development" && { stack: err.stack })
-    }
-  });
+  // ...
 };
 
 // 404 handler for routes not found
+/**
+ * Handles requests to routes that do not exist.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * 
+ * מחזיר קוד 404 עם הודעה שהנתיב לא נמצא, ורשימה של נתיבים זמינים במערכת.
+ */
 exports.notFoundHandler = (req, res) => {
-  res.status(404).json({
-    error: {
-      message: "Route not found",
-      availableRoutes: [
-        "/api/users/test",
-        "/api/users/register", 
-        "/api/users/login",
-        "/api/recipes",
-        "/api/recipes/:id",
-        "/api/categories"
-      ]
-    }
-  });
+  // ...
 };

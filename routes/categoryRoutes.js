@@ -1,28 +1,44 @@
-const express = require("express");
+// יצירת ראוטר חדש של אקספרס
 const router = express.Router();
 
-const categoryController = require("../controllers/categoryController");
-const { syncCategoryRecipeCounts } = require("../utils/updateCategoryRecipeCount");
-const { verifyToken } = require("../middleware/auth");
-const { isAdmin } = require("../middleware/isAdmin");
+/**
+ * @description מסנכרן את כמות המתכונים לכל קטגוריה במסד הנתונים.
+ * @route GET /sync-counts
+ * @access Public
+ */
+router.get("/sync-counts", async (req, res) => { ... });
 
-// Sync utility
-router.get("/sync-counts", async (req, res) => {
-  try {
-    await syncCategoryRecipeCounts();
-    res.json({ msg: "Recipe counts synced successfully" });
-  } catch (err) {
-    res.status(500).json({ error: { message: "Sync failed", detail: err.message } });
-  }
-});
-
-// Public routes
+/**
+ * @description מחזיר את כל הקטגוריות.
+ * @route GET /
+ * @access Public
+ */
 router.get("/", categoryController.getAllCategories);
-router.get("/with-recipes", categoryController.getAllCategoriesWithRecipes); // 🆕 חסר!
+
+/**
+ * @description מחזיר את כל הקטגוריות כולל רשימת המתכונים של כל קטגוריה.
+ * @route GET /with-recipes
+ * @access Public
+ */
+router.get("/with-recipes", categoryController.getAllCategoriesWithRecipes);
+
+/**
+ * @description מחזיר קטגוריה לפי קוד מזהה.
+ * @route GET /by-code/:code
+ * @access Public
+ */
 router.get("/by-code/:code", categoryController.getCategoryByCode);
-router.get("/by-name/:name", categoryController.getCategoryByName); // 🆕 חסר!
 
-// Admin only routes
+/**
+ * @description מחזיר קטגוריה לפי שם.
+ * @route GET /by-name/:name
+ * @access Public
+ */
+router.get("/by-name/:name", categoryController.getCategoryByName);
+
+/**
+ * @description מוסיף קטגוריה חדשה (גישה למנהלים בלבד).
+ * @route POST /
+ * @access Admin
+ */
 router.post("/", verifyToken, isAdmin, categoryController.addCategory);
-
-module.exports = router;

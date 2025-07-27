@@ -1,7 +1,11 @@
 const Category = require("../models/Category");
 const { categorySchema } = require("../validations/categoryValidation");
 
-// קבלת כל הקטגוריות
+/**
+ * קבלת כל הקטגוריות
+ * GET /categories
+ * מחזיר מערך של כל הקטגוריות במערכת.
+ */
 exports.getAllCategories = async (req, res) => {
   try {
     const categories = await Category.find();
@@ -11,7 +15,11 @@ exports.getAllCategories = async (req, res) => {
   }
 };
 
-// 🆕 קבלת כל הקטגוריות עם המתכונים שלהן (דרישה חסרה!)
+/**
+ * קבלת כל הקטגוריות עם המתכונים שלהן
+ * GET /categories/with-recipes
+ * מחזיר את כל הקטגוריות כולל המתכונים הציבוריים של כל קטגוריה.
+ */
 exports.getAllCategoriesWithRecipes = async (req, res) => {
   try {
     const categories = await Category.find().populate({
@@ -30,7 +38,11 @@ exports.getAllCategoriesWithRecipes = async (req, res) => {
   }
 };
 
-// קבלת קטגוריה לפי קוד עם המתכונים שלה
+/**
+ * קבלת קטגוריה לפי קוד עם המתכונים שלה
+ * GET /categories/by-code/:code
+ * מחזיר קטגוריה לפי קוד, כולל המתכונים הציבוריים שלה.
+ */
 exports.getCategoryByCode = async (req, res) => {
   try {
     const category = await Category.findOne({ code: req.params.code }).populate({
@@ -53,7 +65,11 @@ exports.getCategoryByCode = async (req, res) => {
   }
 };
 
-// 🆕 קבלת קטגוריה לפי שם עם המתכונים שלה (דרישה חסרה!)
+/**
+ * קבלת קטגוריה לפי שם עם המתכונים שלה
+ * GET /categories/by-name/:name
+ * מחזיר קטגוריה לפי שם, כולל המתכונים הציבוריים שלה.
+ */
 exports.getCategoryByName = async (req, res) => {
   try {
     const category = await Category.findOne({ name: req.params.name }).populate({
@@ -76,6 +92,11 @@ exports.getCategoryByName = async (req, res) => {
   }
 };
 
+/**
+ * יצירת קטגוריה חדשה
+ * POST /categories
+ * מקבל אובייקט קטגוריה, מאמת אותו, ויוצר קטגוריה חדשה במסד הנתונים.
+ */
 exports.addCategory = async (req, res) => {
   const { error } = categorySchema.validate(req.body);
   if (error) {

@@ -7,6 +7,7 @@ const createUploadDirs = () => {
   const uploadsDir = path.join(__dirname, '../uploads');
   const recipesDir = path.join(__dirname, '../uploads/recipes');
   
+  // בדיקה אם תיקיית uploads קיימת, אם לא - צור אותה
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir);
     console.log('📁 Created uploads directory');
